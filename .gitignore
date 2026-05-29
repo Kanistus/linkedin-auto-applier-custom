@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Operating system files
+Thumbs.db
+db.properties
+.DS_Store
+
+# Local application excels/logs (to protect private application details)
+LinkedIn-Auto-Applier/all excels/*.csv
+LinkedIn-Auto-Applier/logs/
+*.log
+
+# Web driver files and directories
+LinkedIn-Auto-Applier/chromedriver/
+LinkedIn-Auto-Applier/chromedriver.exe
+LinkedIn-Auto-Applier/chromedriver.zip
+
+# Python environment
+venv/
+.venv/
+env/
+.env
