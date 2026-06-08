@@ -212,7 +212,24 @@ def apply_filters() -> None:
     try:
         recommended_wait = 1 if click_gap < 1 else 0
 
-        wait.until(EC.presence_of_element_located((By.XPATH, '//button[normalize-space()="All filters"]'))).click()
+        all_filters_btn = None
+        for xpath in [
+            '//button[normalize-space()="All filters"]',
+            '//button[contains(normalize-space(), "All filters")]',
+            '//button[normalize-space()="Filters"]',
+            '//button[contains(normalize-space(), "Filters")]'
+        ]:
+            try:
+                all_filters_btn = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+                if all_filters_btn:
+                    break
+            except:
+                pass
+        
+        if not all_filters_btn:
+            raise NoSuchElementException("Could not locate 'All filters' or 'Filters' button on the page.")
+        
+        all_filters_btn.click()
         buffer(recommended_wait)
 
         wait_span_click(driver, sort_by)
@@ -257,7 +274,7 @@ def apply_filters() -> None:
 
     except Exception as e:
         print_lg("Setting the preferences failed!")
-        pyautogui.confirm(f"Faced error while applying filters. Please make sure correct filters are selected, click on show results and click on any button of this dialog, I know it sucks. Can't turn off Pause after search when error occurs! ERROR: {e}", ["Doesn't look good, but Continue XD", "Look's good, Continue"])
+        pyautogui.confirm(f"Faced error while applying filters. Please make sure correct filters are selected, click on show results and click on any button of this dialog, I know it sucks. Can't turn off Pause after search when error occurs! ERROR: {e}", "Faced Error", ["Doesn't look good, but Continue XD", "Look's good, Continue"])
         # print_lg(e)
 
 
