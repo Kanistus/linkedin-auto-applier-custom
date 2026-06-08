@@ -1258,9 +1258,26 @@ Kanistus VM"""
                     print_lg(f"\n>-> Didn't find Page {current_page+1}. Probably at the end page of results!\n")
                     break
 
-        except (NoSuchWindowException, WebDriverException) as e:
-            print_lg("Browser window closed or session is invalid. Ending application process.", e)
-            raise e # Re-raise to be caught by main
+        except NoSuchWindowException as e:
+            print_lg("Browser window closed. Ending application process.", e)
+            raise e
+        except WebDriverException as e:
+            # Check if it's a fatal WebDriverException (e.g. invalid session, chrome not reachable, connection refused)
+            msg = str(e).lower()
+            if any(term in msg for term in ["invalid session id", "not reachable", "chrome failed to start", "connection refused", "broken pipe"]):
+                print_lg("WebDriver session is invalid or browser crashed. Ending application process.", e)
+                raise e
+            else:
+                print_lg("Non-fatal WebDriverException occurred inside loop, attempting to continue...", e)
+                # Ensure the modal is dismissed if one is open so it doesn't block future clicks
+                try:
+                    discard_job()
+                except:
+                    try:
+                        actions.send_keys(Keys.ESCAPE).perform()
+                    except:
+                        pass
+                continue
         except Exception as e:
             print_lg("Failed to find Job listings!")
             critical_error_log("In Applier", e)
