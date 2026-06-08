@@ -920,9 +920,49 @@ def apply_to_jobs(search_terms: list[str]) -> None:
 
     if randomize_search_order:  shuffle(search_terms)
     for searchTerm in search_terms:
+        # Dynamically update application answers and cover letter for each search term role
+        global linkedin_headline, linkedin_summary, cover_letter
+        if searchTerm == "Inventory Analyst":
+            linkedin_headline = "Inventory Analyst | Supply Chain & Operations Specialist"
+            linkedin_summary = """Supply Chain & Operations Analyst with experience in inventory optimization, warehouse operations, ERP implementation, and process improvement. Led 10+ operational improvement initiatives that increased inventory accuracy to 97% and improved production visibility through QR-based tracking systems. Skilled in supply chain analytics, KPI reporting, and cross-functional coordination."""
+            cover_letter = """Dear Hiring Manager,
+
+I am writing to express my strong interest in the Inventory Analyst position. With hands-on experience managing inventory control, replenishment cycles, and stock optimization at Bluewave Infotech, I have successfully reduced stock discrepancies and maintained a 97% inventory accuracy rate. I am confident in my ability to bring analytical rigor and operational efficiency to your inventory control team.
+
+Sincerely,
+Kanistus VM"""
+        elif searchTerm == "Supply Chain":
+            linkedin_headline = "Supply Chain & Operations Analyst | Process Optimization"
+            linkedin_summary = """Results-oriented Supply Chain professional with hands-on experience in procurement, production scheduling, warehouse management, and logistics. Experienced in coordinating cross-functional teams and streamlining processes to reduce cycle times."""
+            cover_letter = """Dear Hiring Manager,
+
+I am writing to express my strong interest in the Supply Chain role. At Bluewave Infotech, I managed end-to-end order pipelines and coordinated closely with warehouse teams and vendors to ensure timely fulfillment. My experience streamlining procurement-production-dispatch schedules helped reduce material turnaround times by 15%, making me well-prepared to support your supply chain operations.
+
+Sincerely,
+Kanistus VM"""
+        elif searchTerm == "Process Improvement Analyst":
+            linkedin_headline = "Process Improvement Analyst | Lean Six Sigma | Operations"
+            linkedin_summary = """Analytical professional with experience in operations mapping, workflow optimization, and process improvement. Certified Lean Six Sigma White Belt skilled in identifying operational bottlenecks, conducting root cause analysis, and implementing QR-based tracking systems to boost efficiency."""
+            cover_letter = """Dear Hiring Manager,
+
+I am writing to express my strong interest in the Process Improvement Analyst role. Throughout my career, I have focused on identifying operational inefficiencies and deploying automated tracking tools to resolve bottleneck delays. Notably, I led 10+ process improvement projects at Bluewave Infotech and designed custom QR-code tracking systems that elevated workflow visibility, making me an excellent fit for your continuous improvement team.
+
+Sincerely,
+Kanistus VM"""
+        elif searchTerm == "Supply Chain Analyst":
+            linkedin_headline = "Supply Chain Analyst | ERP & Data Analytics Specialist"
+            linkedin_summary = """Data-centric Supply Chain Analyst experienced in supply chain reporting, demand forecasting, KPI tracking, and ERP systems. Skilled at leveraging data to optimize inventory levels, coordinate vendor timelines, and drive operational decision-making."""
+            cover_letter = """Dear Hiring Manager,
+
+I am writing to express my strong interest in the Supply Chain Analyst position. With a background in electronics engineering and practical experience in SCM, I specialize in building data dashboards for demand forecasting and inventory KPI reporting. My work utilizing ERP systems to manage replenishment cycles and analyze stock trends at Bluewave Infotech directly contributed to increased stock visibility and operational accuracy.
+
+Sincerely,
+Kanistus VM"""
+
         driver.get(f"https://www.linkedin.com/jobs/search/?keywords={searchTerm}")
         print_lg("\n________________________________________________________________________________________________________________________\n")
         print_lg(f'\n>>>> Now searching for "{searchTerm}" <<<<\n\n')
+        print_lg(f'Active Headline: {linkedin_headline}')
 
         apply_filters()
 
