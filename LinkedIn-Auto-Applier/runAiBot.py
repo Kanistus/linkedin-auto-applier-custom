@@ -502,37 +502,53 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                         answer = current_city if current_city else work_location
                     else:
                         answer = work_location
+                elif 'experience' in label or 'year' in label or 'month' in label:
+                    if 'month' in label:
+                        answer = "0"
+                    else:
+                        answer = years_of_experience
                 else: 
                     answer = answer_common_questions(label,answer)
                 try: 
                     select.select_by_visible_text(answer)
                 except NoSuchElementException as e:
-                    # Define similar phrases for common answers
-                    possible_answer_phrases = []
-                    if answer == 'Decline':
-                        possible_answer_phrases = ["Decline", "not wish", "don't wish", "Prefer not", "not want"]
-                    elif 'yes' in answer.lower():
-                        possible_answer_phrases = ["Yes", "Agree", "I do", "I have"]
-                    elif 'no' in answer.lower():
-                        possible_answer_phrases = ["No", "Disagree", "I don't", "I do not"]
-                    else:
-                        # Try partial matching for any answer
-                        possible_answer_phrases = [answer]
-                        # Add lowercase and uppercase variants
-                        possible_answer_phrases.append(answer.lower())
-                        possible_answer_phrases.append(answer.upper())
-                        # Try without special characters
-                        possible_answer_phrases.append(''.join(c for c in answer if c.isalnum()))
-                    ##<
+                    # Check for exact digit matching (e.g. "1" matches "1 year" but not "10 years")
+                    is_numeric_answer = answer.isdigit()
                     foundOption = False
-                    for phrase in possible_answer_phrases:
+                    if is_numeric_answer:
                         for option in optionsText:
-                            # Check if phrase is in option or option is in phrase (bidirectional matching)
-                            if phrase.lower() in option.lower() or option.lower() in phrase.lower():
+                            option_digits = "".join(c for c in option if c.isdigit())
+                            if option_digits == answer:
                                 select.select_by_visible_text(option)
                                 answer = option
                                 foundOption = True
                                 break
+                    if not foundOption:
+                        # Define similar phrases for common answers
+                        possible_answer_phrases = []
+                        if answer == 'Decline':
+                            possible_answer_phrases = ["Decline", "not wish", "don't wish", "Prefer not", "not want"]
+                        elif 'yes' in answer.lower():
+                            possible_answer_phrases = ["Yes", "Agree", "I do", "I have"]
+                        elif 'no' in answer.lower():
+                            possible_answer_phrases = ["No", "Disagree", "I don't", "I do not"]
+                        else:
+                            # Try partial matching for any answer
+                            possible_answer_phrases = [answer]
+                            # Add lowercase and uppercase variants
+                            possible_answer_phrases.append(answer.lower())
+                            possible_answer_phrases.append(answer.upper())
+                            # Try without special characters
+                            possible_answer_phrases.append(''.join(c for c in answer if c.isalnum()))
+                        ##<
+                        for phrase in possible_answer_phrases:
+                            for option in optionsText:
+                                # Check if phrase is in option or option is in phrase (bidirectional matching)
+                                if phrase.lower() in option.lower() or option.lower() in phrase.lower():
+                                    select.select_by_visible_text(option)
+                                    answer = option
+                                    foundOption = True
+                                    break
                     if not foundOption:
                         #TODO: Use AI to answer the question need to be implemented logic to extract the options for the question
                         print_lg(f'Failed to find an option with text "{answer}" for question labelled "{label_org}", answering randomly!')
@@ -612,7 +628,11 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
 
             prev_answer = text.get_attribute("value")
             if not prev_answer or overwrite_previous_answers:
-                if 'experience' in label or 'years' in label: answer = years_of_experience
+                if 'experience' in label or 'years' in label or 'month' in label:
+                    if 'month' in label:
+                        answer = "0"
+                    else:
+                        answer = years_of_experience
                 elif 'phone' in label or 'mobile' in label: answer = phone_number
                 elif 'street' in label: answer = street
                 elif 'city' in label or 'location' in label or 'address' in label:
