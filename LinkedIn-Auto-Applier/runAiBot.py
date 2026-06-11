@@ -507,6 +507,8 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                         answer = "0"
                     else:
                         answer = years_of_experience
+                elif 'reloc' in label:
+                    answer = "Yes"
                 else: 
                     answer = answer_common_questions(label,answer)
                 try: 
@@ -638,6 +640,8 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
                 elif 'city' in label or 'location' in label or 'address' in label:
                     answer = current_city if current_city else work_location
                     do_actions = True
+                elif 'reloc' in label:
+                    answer = "yes, any location"
                 elif 'signature' in label: answer = full_name # 'signature' in label or 'legal name' in label or 'your name' in label or 'full name' in label: answer = full_name     # What if question is 'name of the city or university you attend, name of referral etc?'
                 elif 'name' in label:
                     if 'full' in label: answer = full_name
