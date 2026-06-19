@@ -760,6 +760,27 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
             ##<
             continue
 
+        # Check if it's a file upload question
+        file_input = try_xp(Question, ".//input[@type='file']", False)
+        if file_input:
+            label = try_xp(Question, ".//label[@for]", False)
+            label_org = label.text if label else "Unknown"
+            label = label_org.lower()
+            
+            # Check if it's asking for a photo
+            if 'photo' in label or 'picture' in label or 'image' in label or 'headshot' in label:
+                photo_path = "all resumes/default/photo.jpg"
+                if os.path.exists(photo_path):
+                    try:
+                        file_input.send_keys(os.path.abspath(photo_path))
+                        print_lg(f"Successfully uploaded photo: {photo_path}")
+                    except Exception as e:
+                        print_lg("Failed to upload photo!", e)
+                else:
+                    print_lg(f"Photo path '{photo_path}' does not exist! Skipping photo upload.")
+            questions_list.add((label_org, "File Upload", "file", None))
+            continue
+
         # Check if it's a checkbox question
         checkbox = try_xp(Question, ".//input[@type='checkbox']", False)
         if checkbox:
