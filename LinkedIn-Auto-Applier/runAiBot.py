@@ -70,7 +70,7 @@ middle_name = middle_name.strip()
 last_name = last_name.strip()
 full_name = first_name + " " + middle_name + " " + last_name if middle_name else first_name + " " + last_name
 
-useNewResume = True
+useNewResume = use_new_resume if 'use_new_resume' in globals() else True
 randomly_answered_questions = set()
 
 tabs_count = 1
@@ -450,6 +450,8 @@ def upload_resume(modal: WebElement, resume: str) -> tuple[bool, str]:
 # Function to answer common questions for Easy Apply
 def answer_common_questions(label: str, answer: str) -> str:
     if 'sponsorship' in label or 'visa' in label: answer = require_visa
+    elif any(word in label for word in ['convict', 'guilty', 'no contest', 'crime', 'criminal', 'felony', 'misdemeanor', 'charges pending']):
+        answer = 'No'
     return answer
 
 
@@ -792,12 +794,16 @@ def answer_questions(modal: WebElement, questions_list: set, work_location: str,
             prev_answer = checkbox.is_selected()
             checked = prev_answer
             if not prev_answer:
-                try:
-                    actions.move_to_element(checkbox).click().perform()
-                    checked = True
-                except Exception as e: 
-                    print_lg("Checkbox click failed!", e)
-                    pass
+                if any(word in label for word in ['convict', 'guilty', 'no contest', 'crime', 'criminal', 'felony', 'misdemeanor', 'charges pending']):
+                    print_lg(f"Skipping checking for crime/conviction checkbox: {label_org}")
+                    checked = False
+                else:
+                    try:
+                        actions.move_to_element(checkbox).click().perform()
+                        checked = True
+                    except Exception as e: 
+                        print_lg("Checkbox click failed!", e)
+                        pass
             questions_list.add((f'{label} ([X] {answer})', checked, "checkbox", prev_answer))
             continue
 
@@ -1363,7 +1369,7 @@ def main() -> None:
         alert_title = "Error Occurred. Closing Browser!"
         validate_config()
         
-        if not os.path.exists(default_resume_path):
+        if useNewResume and not os.path.exists(default_resume_path):
             pyautogui.alert(text='Your default resume "{}" is missing! Please update it\'s folder path "default_resume_path" in config.py\n\nOR\n\nAdd a resume with exact name and path (check for spelling mistakes including cases).\n\n\nFor now the bot will continue using your previous upload from LinkedIn!'.format(default_resume_path), title="Missing Resume", button="OK")
             useNewResume = False
         

@@ -23,6 +23,9 @@ version:    26.01.20.5.08
 # Give an relative path of your default resume to be uploaded. If file in not found, will continue using your previously uploaded resume in LinkedIn.
 default_resume_path = "all resumes/default/resume.pdf"      # (In Development)
 
+# Should the bot upload a new resume? If False, it will use your previously uploaded resume on LinkedIn.
+use_new_resume = False
+
 # What do you want to answer for questions that ask about years of experience you have, this is different from current_experience? 
 years_of_experience = "1"          # A number in quotes Eg: "0","1","2","3","4", etc.
 
